@@ -32,7 +32,7 @@ A feature-rich Discord Music Bot built with Discord.py and Wavelink, offering hi
 2. **Installation**
 
    ```bash
-   pip install discord.py wavelink ffmpeg
+   pip install discord.py wavelink ffmpeg pillow
    ```
 
 3. **Configuration**
