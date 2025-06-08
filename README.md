@@ -24,8 +24,8 @@ A feature-rich Discord Music Bot built with Discord.py and Wavelink, offering hi
 ## Setup
 
 1. **Prerequisites**
-   - Python 3.8 or higher
-   - Discord.py 2.0+
+   - Python 3.10 or higher
+   - Discord.py 2.4+
    - Wavelink
    - FFmpeg
 
