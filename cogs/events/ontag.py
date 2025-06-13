@@ -8,6 +8,8 @@ GitHub: https://github.com/WannaBeGhoSt
 """
 
 import discord
+import os
+
 from discord.ext import commands
 from ghostyconfig import Ghostyname, Ghostycolor, Ghostyemojis
 
@@ -51,7 +53,9 @@ class OnTag(commands.Cog):
                 color=Ghostycolor
             )
             embed.set_thumbnail(url=message.author.display_avatar.url if message.author else None)
-            ghostyimgpath = "C:/Users/user2/Desktop/GhoSty Music Bot/assets/ghostyhaqwp.jpg"
+            
+            bghostysbasedir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))  
+            ghostyimgpath = os.path.join(bghostysbasedir, "assets", "ghostyhaqwp.jpg")
             file = discord.File(ghostyimgpath, filename="ghostyhaqwp.jpg")
             embed.set_image(url="attachment://ghostyhaqwp.jpg")
             
