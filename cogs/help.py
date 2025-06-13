@@ -9,6 +9,8 @@ GitHub: https://github.com/WannaBeGhoSt
 
 import difflib
 import discord
+import os
+
 from discord.ext import commands
 from discord.ui import View, Select, Button
 
@@ -162,7 +164,8 @@ class Help(commands.Cog):
             )
             embed.add_field(name=f"{Ghostyemojis.get('category')} **__Modules__**", value=f"‎ ‎ ‎ ‎ {Ghostyemojis.get('music')} : Music\n‎ ‎ ‎ ‎ {Ghostyemojis.get('radio')} : Radio\n‎ ‎ ‎ ‎ {Ghostyemojis.get('utility')} : Utility", inline=False)
 
-            ghostyimgpath = "C:/Users/user2/Desktop/GhoSty Music Bot/assets/ghostyhaqwp.jpg"
+            bghostysbasedir = os.path.dirname(os.path.dirname(__file__))
+            ghostyimgpath = os.path.join(bghostysbasedir, "assets", "ghostyhaqwp.jpg")
             file = discord.File(ghostyimgpath, filename="ghostyhaqwp.jpg")
             embed.set_image(url="attachment://ghostyhaqwp.jpg")
             ghostytop = discord.AllowedMentions.none()
