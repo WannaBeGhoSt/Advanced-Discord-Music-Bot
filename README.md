@@ -188,7 +188,7 @@ black .
 
 Need help? Join our active Discord community for support, updates, and suggestions:
 
-[![Discord](https://img.shields.io/discord/your-server-id?color=5865F2&logo=discord&logoColor=white)](https://discord.gg/SyMJymrV8x)
+[![Discord](https://img.shields.io/discord/1167459192026714122?color=5865F2&logo=discord&logoColor=white)](https://discord.gg/SyMJymrV8x)
 
 - **Report Bugs**: [GitHub Issues](https://github.com/WannaBeGhoSt/Advanced-Discord-Music-Bot/issues)
 - **Request Features**: [Feature Requests](https://github.com/WannaBeGhoSt/Advanced-Discord-Music-Bot/discussions)
@@ -220,4 +220,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 *Tags: discord music bot, discord.py bot, wavelink bot, python discord bot, music bot github, best discord music bot, free music bot, discord bot with radio, high quality music bot, discord.py music example, lavalink bot, discord music python, open source discord bot*
+
 
