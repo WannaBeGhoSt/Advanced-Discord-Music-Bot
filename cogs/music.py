@@ -311,55 +311,171 @@ class Music(commands.Cog):
         return True
 
 
-    async def genmusiccardghosty(self, title: str, author: str, artwork_url: str, duration: str) -> discord.File:
+    async def genmusiccardghosty(self, title: str, author: str, artwork_url: str, duration: str) -> discord.File:          
+        title_font = ImageFont.truetype("arialbd.ttf", 44)
+        subtitle_font = ImageFont.truetype("arial.ttf", 28)
+        duration_font = ImageFont.truetype("arial.ttf", 24)
     
-        title_font = ImageFont.truetype("arialbd.ttf", 52)
-        subtitle_font = ImageFont.truetype("arial.ttf", 34)
-        duration_font = ImageFont.truetype("arial.ttf", 28)
-
-    
+        
         width, height = 1280, 400
-        base = Image.new("RGB", (width, height), (15, 15, 15))
-        draw = ImageDraw.Draw(base)
-
-    
+        
+        
         async with aiohttp.ClientSession() as session:
             async with session.get(artwork_url) as resp:
                 if resp.status != 200:
                     raise Exception("Failed to load artwork")
                 data = io.BytesIO(await resp.read())
-        artwork = Image.open(data).resize((360, 360)).convert("RGBA")
-
-    
-        mask = Image.new("L", artwork.size, 0)
+        
+        artwork = Image.open(data).convert("RGB")
+        
+        
+        bg = artwork.resize((width, height), Image.Resampling.LANCZOS)
+        bg = bg.filter(ImageFilter.GaussianBlur(40))
+        
+        
+        bg = Image.blend(bg, Image.new("RGB", (width, height), (20, 20, 25)), 0.7)
+        
+        
+        gradient = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        gradient_draw = ImageDraw.Draw(gradient)
+        for y in range(height):
+            alpha = int(80 * (y / height))
+            gradient_draw.line([(0, y), (width, y)], fill=(0, 0, 0, alpha))
+        
+        bg = bg.convert("RGBA")
+        bg = Image.alpha_composite(bg, gradient)
+        
+        
+        artwork_size = 320
+        session = aiohttp.ClientSession()
+        resp = await session.get(artwork_url)
+        artwork_data = await resp.read()
+        await session.close()
+        
+        artwork = Image.open(io.BytesIO(artwork_data))
+        artwork = artwork.resize((artwork_size, artwork_size)).convert("RGBA")
+        
+        
+        mask = Image.new("L", (artwork_size, artwork_size), 0)
         mask_draw = ImageDraw.Draw(mask)
-        mask_draw.rounded_rectangle((0, 0, artwork.width, artwork.height), radius=30, fill=255)
+        mask_draw.rounded_rectangle((0, 0, artwork_size, artwork_size), radius=25, fill=255)
         artwork.putalpha(mask)
-
-    
-        base.paste(artwork, (width - 400, 20), artwork)
-
-    
-        draw.text((50, 50), title, font=title_font, fill=(230, 192, 123))  
-        draw.text((50, 130), f"by {author}", font=subtitle_font, fill=(220, 220, 220))
-        draw.text((50, 300), f"Duration: {duration}", font=duration_font, fill=(190, 190, 190))
-
-    
-        bar_x, bar_y = 50, 350
-        bar_width = width - 500
-        bar_height = 20
-        fill_width = 5  
-
-    
-        draw.rounded_rectangle([bar_x, bar_y, bar_x + bar_width, bar_y + bar_height], radius=10, fill=(44, 44, 46))  
-        draw.rounded_rectangle([bar_x, bar_y, bar_x + fill_width, bar_y + bar_height], radius=10, fill=(230, 192, 123))  
-
-
-    
+        
+        
+        artwork_x = width - artwork_size - 50
+        artwork_y = (height - artwork_size) // 2
+        
+        
+        bg.paste(artwork, (artwork_x, artwork_y), artwork)
+        
+        
+        card = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        card_draw = ImageDraw.Draw(card)
+        
+        
+        glass_left = 40
+        glass_top = 40
+        glass_right = artwork_x - 30  
+        glass_bottom = height - 40
+        
+        
+        card_draw.rounded_rectangle(
+            [glass_left, glass_top, glass_right, glass_bottom],
+            radius=35,
+            fill=(255, 255, 255, 15)  
+        )
+        
+        
+        card_draw.rounded_rectangle(
+            [glass_left, glass_top, glass_right, glass_bottom],
+            radius=35,
+            outline=(255, 255, 255, 40),
+            width=1
+        )
+        
+        
+        bg = Image.alpha_composite(bg, card)
+        draw = ImageDraw.Draw(bg)
+        
+        
+        def truncate_text(text: str, font, max_width: int) -> str:
+            text_bbox = draw.textbbox((0, 0), text, font=font)
+            text_width = text_bbox[2] - text_bbox[0]
+            
+            if text_width <= max_width:
+                return text
+            
+            while len(text) > 0:
+                test_text = text + "..."
+                text_bbox = draw.textbbox((0, 0), test_text, font=font)
+                if text_bbox[2] - text_bbox[0] <= max_width:
+                    return test_text
+                text = text[:-1]
+            return "..."
+        
+        
+        text_start_x = 80
+        text_max_width = glass_right - text_start_x - 40
+        
+        
+        truncated_title = truncate_text(title, title_font, text_max_width)
+        draw.text((text_start_x, 90), truncated_title, font=title_font, fill=(255, 255, 255, 250))
+        
+        
+        truncated_author = truncate_text(author, subtitle_font, text_max_width)
+        draw.text((text_start_x, 150), truncated_author, font=subtitle_font, fill=(255, 255, 255, 180))
+        
+        
+        draw.text((text_start_x, 280), f"Duration: {duration}", font=duration_font, fill=(255, 255, 255, 160))
+        
+        
+        bar_x = text_start_x
+        bar_y = 330
+        bar_width = text_max_width
+        bar_height = 4
+        
+        
+        draw.rounded_rectangle(
+            [bar_x, bar_y, bar_x + bar_width, bar_y + bar_height],
+            radius=2,
+            fill=(255, 255, 255, 50)
+        )
+        
+        
+        fill_width = int(bar_width * 0.15)
+        draw.rounded_rectangle(
+            [bar_x, bar_y, bar_x + fill_width, bar_y + bar_height],
+            radius=2,
+            fill=(255, 255, 255, 200)  
+        )
+        
+        
+        dot_radius = 8
+        dot_x = bar_x + fill_width
+        dot_y = bar_y + (bar_height // 2)
+        
+        
+        draw.ellipse(
+            [dot_x - dot_radius + 1, dot_y - dot_radius + 1, 
+             dot_x + dot_radius + 1, dot_y + dot_radius + 1],
+            fill=(0, 0, 0, 60)
+        )
+        
+        
+        draw.ellipse(
+            [dot_x - dot_radius, dot_y - dot_radius, 
+             dot_x + dot_radius, dot_y + dot_radius],
+            fill=(255, 255, 255, 255)
+        )
+        
+        
+        bg = bg.convert("RGB")
+        
+        
         buffer = io.BytesIO()
-        base.save(buffer, format="PNG")
+        bg.save(buffer, format="PNG", quality=95)
         buffer.seek(0)
-        return discord.File(fp=buffer, filename="music_card.png")
+        return discord.File(fp=buffer, filename="ghostymusiccard.png")
 
     @commands.Cog.listener()
     async def on_wavelink_track_start(self, payload: wavelink.TrackStartEventPayload):
@@ -384,7 +500,7 @@ class Music(commands.Cog):
         )
         if original and original.recommended:
             embed.description += f"\n\nThis track was recommended via {track.source}"
-        embed.set_image(url="attachment://music_card.png")
+        embed.set_image(url="attachment://ghostymusiccard.png")
         await player.home.send(embed=embed, file=card_file)
 
 
