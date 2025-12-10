@@ -133,11 +133,6 @@ For optimal performance, we recommend setting up your own Lavalink server:
    java -jar Lavalink.jar
    ```
 
-### Customization Options
-- Modify `config.py` for custom settings
-- Edit `embeds.py` to customize message appearances
-- Adjust `audio_filters.py` for custom audio effects
-
 ## ❓ Frequently Asked Questions
 
 ### 🤔 Why is this the best Discord music bot on GitHub?
@@ -220,5 +215,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 *Tags: discord music bot, discord.py bot, wavelink bot, python discord bot, music bot github, best discord music bot, free music bot, discord bot with radio, high quality music bot, discord.py music example, lavalink bot, discord music python, open source discord bot*
+
 
 
